@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">    
+	<link rel="stylesheet" href="hilite/styles/zenburn.css">
+    <title>rstl: The Resource Oriented Template language</title>
+	<style type="text/css" media="screen">
+		body {
+	  		background-color: #C1E9F8;
+	  		margin: 0 auto;
+	  		font-family: 'Georgia', 'Garamond', 'serif';
+	  		font-size: 100%;
+	  		overflow-x: hidden;
+		}
+		
+		.center {
+			margin: 0 auto;
+			width:85%;
+			max-width: 980px;
+		}
+		.top {
+		  margin: 0 auto;
+		  background-color: #FBFBEF;	
+		  width: 100%;
+		  border: 2px solid #636161;
+		  box-shadow: 1px 0px 6px rgba(0, 0, 0, 0.5);
+		  -moz-box-shadow: 1px 0px 6px rgba(0, 0, 0, 0.5);
+		  -webkit-box-shadow: 1px 0px 6px rgba(0, 0, 0, 0.5);
+		  border-bottom: 0;
+		  border-top: 0;
+		  
+		}
+		.top #rstl {
+		  float: left;
+		  background-color: #FBFBEF;
+		  margin: 10px 5px 10px;
+		  height: 450px;
+		  font-size: 16px;
+		  line-height: 1.4em;
+		  color: #0B3840;
+		  width: 450px;
+		  padding: 45px 20px 23px 30px;
+		  
+		  
+		}
+		#rstl h2 {
+			font-size: 24px;
+			line-height: 1.4em;
+			text-align: center;
+		}
+		#rstl span {
+			color : #FE642E;
+		}
+		.top #examples {
+			float: left;
+			font-size: 12px;
+			font-family: 'Bitstream Vera Sans Mono', 'DejaVu Sans Mono', 'Monaco', 'Courier';
+			margin: 1em 0;
+		}
+		#examples > span {
+			font-size: 18px;
+			color: #143352;
+			font-weight: bold;
+			font-family: Arial, sans-serif;
+		}
+		.snippet {
+			border-radius: 3px;
+		}
+		.snippet .rstltag {
+			color: gray;
+		}
+		.page {
+			padding: 20px 20px 23px 30px;
+			margin: 10px 0px 0px 0px;
+			border: 2px solid #636161;
+			box-shadow: 1px 0px 6px rgba(0, 0, 0, 0.5);
+			-moz-box-shadow: 1px 0px 6px rgba(0, 0, 0, 0.5);
+			-webkit-box-shadow: 1px 0px 6px rgba(0, 0, 0, 0.5);
+			border-bottom: 0;
+			border-top: 0;
+		}
+		
+		#nav {
+			background: #d8e0de; /* Old browsers */
+			background: -moz-linear-gradient(top, #d8e0de 0%, #aebfbc 16%, #99afab 34%, #8ea6a2 46%, #829d98 59%); /* FF3.6+ */
+			background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#d8e0de), color-stop(16%,#aebfbc), color-stop(34%,#99afab), color-stop(46%, #8ea6a2), color-stop(59%, #829d98)); /* Chrome,Safari4+ */
+			background: -webkit-linear-gradient(top, #d8e0de 0%,#aebfbc 16%,#99afab 34%,#8ea6a2 46%,#829d98 59%); /* Chrome10+,Safari5.1+ */
+			background: -o-linear-gradient(top, #d8e0de 0%,#aebfbc 16%,#99afab 34%,#8ea6a2 46%,#829d98 59%); /* Opera 11.10+ */
+			background: -ms-linear-gradient(top, #d8e0de 0%,#aebfbc 16%,#99afab 34%,#8ea6a2 46%,#829d98 59%); /* IE10+ */
+			background: linear-gradient(to bottom, #d8e0de 0%,#aebfbc 16%,#99afab 34%,#8ea6a2 46%,#829d98 59%); /* W3C */
+			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d8e0de', endColorstr='#0e0e0e',GradientType=0 ); /* IE6-9 */
+
+			z-index:20;
+			top: 250px;
+			left: 10px;
+			position: fixed;
+			width: 80px;
+			padding-left: 15px;
+			padding-top: 10px;
+			padding-bottom: 10px;
+			border: 2px solid #636161;
+			border-bottom: 0;
+			border-left: 0;
+			opacity: 1.0;
+			-moz-border-radius: 15px;
+			border-radius: 15px;
+			box-shadow: 1px 0px 6px rgba(0, 0, 0, 0.5);
+			-moz-box-shadow: 1px 0px 6px rgba(0, 0, 0, 0.5);
+			-webkit-box-shadow: 1px 0px 6px rgba(0, 0, 0, 0.5);
+		}
+		
+		.menuele {
+			padding-right: 10px;
+			line-height: 1.5em;
+			font-size: 16px;
+			height: 2em;
+			color:blue;
+		}
+		
+		.menuele:visited {
+			color:white;
+		}
+		
+		.menuele:hover {
+			background: #D20E28;
+		}
+		
+		#overview h1, #language h1,  
+		#overview h2, #language h2, 
+		#overview h3, #language h3, 
+		#overview h4, #language h4 {
+			color: #E2E2B1;
+		}
+		
+		#usage h1, #about h1, 
+		#usage h2, #about h2, 
+		#usage h3, #about h3, 
+		#usage h4, #about h4 {
+			color: #143352;
+		}
+		
+		#usage pre code, .highlight pre {
+			padding: 5px;
+			background-color: #EFC;
+			color: #333;
+			line-height: 120%;
+			border: 1px solid #AC9;
+			border-left: none;
+			border-right: none;
+		}
+		
+		#usage pre code {
+			background-color: #F8F8F8;
+			border: 1px solid #CCC;
+		}
+		
+		#overview, #language {
+			background: #5E5A5C;
+			color: #EAF2D9;
+		}
+		
+		#usage, #about {
+			background: #FBFBEF;
+			color: #143352;
+		}
+		
+		.highlight .cp, highlight .o {
+			color: #999;
+			font-weight: bold;
+		}
+		
+		.highlight .nv {
+			color: teal;
+		}
+		
+		.highlight .nf {
+			color: #900;
+		}
+		.highlight .s2 {
+			color: #D14;
+		}
+		.highlight .k {
+			font-weight: bold;
+		}
+		.highlight .nb {
+			color: #0086B3;
+		}
+	</style>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script>
+
+	$(document).ready(function() {
+		var nav = document.getElementById("nav");
+		var main = document.getElementById("main");
+		var offsetLeft = main.offsetLeft - nav.offsetWidth -5;
+		if (offsetLeft > 0) {
+			nav.style.left= offsetLeft + "px";
+		}
+		window.onresize = function(event) {
+			var offsetLeft = main.offsetLeft - nav.offsetWidth -5;
+			if (offsetLeft > 0) {
+				nav.style.left= offsetLeft + "px";
+					nav.style.opacity = "1.0";
+			} else {
+				var overlap = main.offsetLeft - nav.offsetLeft - nav.offsetWidth;
+				if (overlap < -20) {
+					nav.style.opacity = "0.7";
+				} else {
+					nav.style.opacity = "1.0";
+				}
+			}
+		}
+		$(".menuele").click(function(event) {
+			console.log(event);
+			var anchorObj = event.currentTarget;
+			var hrefurl = anchorObj.getAttribute('href');
+			console.log(hrefurl);
+			window.location.href=hrefurl;
+			//window.scrollBy(0,-20);
+			event.preventDefault();
+		});
+	});
+	
+	</script>
+	
+  </head>
+  <body>
+	<section id="nav" class="docked">
+		<a class="menuele" href="#home">Home</a>
+	    <a class="menuele" href="#overview">Overview</a>
+	    <a class="menuele" href="#usage">Usage</a>
+	    <a class="menuele" href="#language">Syntax</a>
+	    <a class="menuele" href="#about">About</a>
+	</section>
+<div id="main" class="center">		
+  <section id="home">
+      <header class="top">
+    		<section id="rstl">
+      			<h2>The <span>resource</span> oriented <span>template</span> language</h2>
+      			<p>
+        			The resource oriented template language (<span><em>rstl</em></span> pronounced \<em>'rest-əl</em> \) allows web developers to build web sites and presentation tiers of web applications using a <span>simple template language</span> syntax inspired by Django templates.</p>
+
+<p>The template language features <span>template inheritance</span> and allows the <span>layout</span> and structure of pages to be cleanly separated from the <span>resources</span> that make up a page.</p>
+
+				<p>The template engine has bindings for <span>Java</span>, which allows developers to not only <span>render</span> these templates, but also <span>introspect</span> the template for the resources and other elements referenced in the template.</p>
+    		</section>
+
+<section id="examples">
+	<span>Separate structure ...</span>
+		<pre class="snippet">
+			<code>&lt;html&gt;
+  &lt;title&gt;
+    <span class="rstltag">{%</span><span class="keyword">block</span> </span><span class="literal">title</span><span class="rstltag">%}</span>Welcome<span class="rstltag">{%</span><span class="keyword">endblock</span><span class="rstltag">%}</span>
+  &lt;/title&gt;
+<span class="rstltag">...</span>
+  &lt;section id=&quot;center&quot;&gt;
+    <span class="rstltag">{%</span><span class="keyword">block</span> <span class="literal">section1</span><span class="rstltag">%}</span> <span class="rstltag">{%</span><span class="keyword">endblock</span><span class="rstltag">%}</span>
+  &lt;/section&gt;
+<span class="rstltag">...</span>
+  &lt;section id=&quot;sidebar&quot;&gt;
+    <span class="rstltag">{%</span><span class="keyword">for</span> <span class="variable">ad</span> <span class="keyword">in</span> <span class="variable">ads</span> <span class="rstltag">%}</span>
+    &lt;a href=<span class="variable">{{ad.url}}</span>&gt; &lt;img src=<span class="variable">{{ad.image}}</span>&gt;&lt;/a&gt;
+    <span class="rstltag">{%</span><span class="keyword">endfor</span><span class="rstltag">%}</span>
+  &lt;/section&gt;</code>
+		</pre>
+		<span>from the resources unique to a page</span>
+		<pre class="snippet">
+			<code><span class="rstltag">{%</span><span class="keyword">layout</span> <span class="literal">&quot;simplelayout.html&quot;</span><span class="rstltag">%}</span>
+<span class="rstltag">{%</span><span class="keyword">resource.json</span> <span class="literal">&quot;/pageinfo/home&quot;</span> <span class="keyword">as</span> <span class="variable">page</span><span class="rstltag">%}</span>
+<span class="rstltag">{%</span><span class="keyword">resource.json</span> <span class="literal">&quot;/ads/latest&quot;</span> <span class="keyword">as</span> <span class="variable">ads</span><span class="rstltag">%}</span>
+
+<span class="rstltag">{%</span><span class="keyword">block</span> <span class="literal">title</span><span class="rstltag">%}</span><span class="variable">{{page.title}}</span><span class="rstltag">{%</span><span class="keyword">endblock</span><span class="rstltag">%}</span>
+
+<span class="rstltag">{%</span><span class="keyword">block</span> <span class="literal">section1</span><span class="rstltag">%}</span> 
+ <span class="rstltag">{%</span><span class="keyword">resource.xhtml</span> <span class="literal">&quot;/categories&quot;</span> 
+            <span class="keyword">with</span> <span class="variable">jquery.carousel</span><span class="rstltag">%}</span>
+ <span class="rstltag">{%</span><span class="keyword">resource.xhtml</span> <span class="literal">&quot;/products/trending&quot;</span> 
+            <span class="keyword">with</span> <span class="variable">dojo.popup</span><span class="rstltag">%}</span>
+<span class="rstltag">{%</span><span class="keyword">endblock</span><span class="rstltag">%}</span>
+		</code>
+	</pre>
+</section>
+		<div style="clear: both"></div>	
+	</header>
+</section>
+
+	
+<section id="overview">
+		<div class="page">
+		<h1>Overview</h1>
+		<p> The Resource Oriented Template language builds on the concept that a web page is comprised primarily of a collection of resources. Presentation elements through the use of HTML, JavaScript and CSS allow the representation of these resources to be uniquely rendered and allows for a rich interactive experience for users. This section describes the concepts introduced in <em>rstl</em>.</p> 
+    	<h2>Concepts</h2>
+
+		<h4>Template Context</h4>
+		<p>The template context encapsulates all the data that is required to successfully render a template. The elements of the context usually corresponds to the variables that are referenced in the template. The context is modeled as a <em>java.util.Map</em> with keys that are strings (corresponding the the variable name) and values that are objects. The values may be of any type, but usually are either String, Maps or Lists. If the value is not an instance of one of these types, attributes in the object referenced as variables in the template must have an accessor (getter method). </p>
+
+		<h4>Template</h4>
+		<p>The template as defined by the language is mostly the skeleton of a page with placeholders where variable values and resource representations can be substituted in. The language allow for minimal control consturcts and is limited to iteration through values in a list of map and branching based on the value of variable or expression. The template language is agnostic of the implementation language of the template engine and does not allow the template developer to escape in to the implementation language. This implies that any complex computation, model or data extraction and routing needs to be performed prior to invoking or rendering the template.</p><p>The language also does not allow for variable assignments and therefore the only variables that can be referenced in the template ar those that are made available through the template context or through some implicit assignment as in the case of a for loop or a resource referenced as a variable.</p>
+
+		<h4>Layout</h4>
+		<p>A layout is just another template that specifies the basic layout of the page. The layout could be that for a 3-column web page or a smart phone customized layout. The layout provides the extension points that will be filled by the template rendering the layout. This approach allows a user or developer to switch layouts on a page without affecting the data is used to source the primary content on the page. A layout is referenced in a template using the <em>layout</em> template tag.</p>
+		
+		<h4>Template inheritance</h4>
+		<p>Templates can inherit from other templates by declaring a <em>extends</em> statement with the location of the parent template. The template inherits all the content of the parent template (including that of all its ancestors). The place holders, specifically the named <em>block</em> tags can have their definition (content) be overriden by the sub-classed template. Template inheritance along with Template inclusion (including a template within another template using the <em>include</em> statement), provide a powerful means to simplify and reuse presentation content.</p>
+		
+		<h4>Template group</h4>
+		<p>A template group is a collection of templates that are rooted at a common directory which are compiled as a unit and loaded together using a common class loader. It is possible to specify inheritance across template groups. For instance, if a template cannot be located in the primary template group, it may be located in one of the template groups identified as its ancestor.
+		</p>
+		
+		
+		<h2>Philosophy</h2>
+
+		<p>Coming soon ...</p>
+	</div>
+</section>
+
+<section id="usage">
+ 	<div class="page">
+<h1>Usage</h1>
+
+<h2>Installation</h2>
+	Coming soon ...
+<h2>Use</h2>
+<p>Templates are primarily meant to be rendered by any Java code. To render a template, you need to specify the location of the templates. This location is used to initialize a template group as follows where the "templates" directory in the current working directory is the location of the templates.</p>
+
+<pre>
+	<code class="java">
+TemplateGroup tg = new TemplateGroup("templates");
+	</code>
+</pre>
+
+<p>The template context is then set up by the java code. In the example below a list of names is set up in the template context.</p>
+
+<pre>
+	<code class="java">
+Map<String, Object> initContext = new HashMap<String, Object>();
+List<String> names = Arrays.asList("John", "Fred", "Betsy");
+initContext.put("names", names);
+	
+TemplateContextImpl ctx = new TemplateContextImpl(initContext, tg);	
+	</code>
+</pre>
+
+<p>If the template to be rendered resides in "stores/default/guest.html" in the "templates" directory used to initialize the template group above, then the template may be rendered as follows where w is a Writer object to which the template output will be written to.</p>
+
+<pre>
+	<code class="java">
+tg.render("stores/default/guest.html", ctx, w);	
+	</code>
+</pre>
+
+<p>In the example below "guest.html" inherits from another template "layouts/nolayout.html" and renders the names in a for loop with in a block named "content".</p>
+
+<pre>
+	<code class="django">
+{% extends "layouts/nolayout.html" %}
+{% block content%}
+  &lt;ul&gt;
+    {%for name in names %}
+      &lt;li&gt; {{name}} &lt;/li&gt;
+    {%endfor%}
+  &lt;/ul&gt;
+{% endblock content %}
+	</code>
+</pre>
+
+<p>The template "nolayout.html" defines the original content of the block and where the block should be rendered as follows.</p>
+
+<pre>
+	<code class="django">
+&lt;html&gt;
+  &lt;head&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    {%block content%}{%endblock%}
+  &lt;/body&gt;
+&lt;/html&gt;
+	</code>
+</pre>
+
+<p>With the template context as defined above, the template would be rendered as: </p>
+<pre>
+	<code class="django">
+&lt;html&gt;
+  &lt;head&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;ul&gt;
+      &lt;li&gt; John &lt;/li&gt;
+      &lt;li&gt; Fred &lt;/li&gt;
+      &lt;li&gt; Betsy &lt;/li&gt;
+    &lt;/ul&gt;				
+  &lt;/body&gt;
+&lt;/html&gt;
+	</code>
+</pre>
+
+
+<h2>Configuration</h2>
+
+<h2>Command-line usage</h2>
+
+</div>
+</section>
+
+<section id="language">
+	<div class="page">
+  <h1>The Language</h1>
+
+<h3>
+<a name="template-variables" class="anchor" href="#template-variables"><span class="mini-icon mini-icon-link"></span></a>Template variables</h3>
+
+<p>Variables in the template language are referenced with in double curly braces and cause substitution
+of values from the template context that maps to the same name.
+For example the following snippet references an attribute named "user" from the context used to
+render the template.</p>
+
+<div class="highlight"><pre><span class="cp">{{</span><span class="nv">user</span><span class="cp">}}</span><span class="x"></span>
+</pre></div>
+
+<p>Variables may reference attributes of the context values using a "." notation. If the variable is a Map
+object, then the attribute value is fetched from the Map object. If it is a regular Java object, then it
+uses a getter method to retrieve the attribute value. In the snippet below, the "fullname" attribute of a
+object referenced as "user" in the context is retrieved if the "user" object is an instance of a Map. 
+If the object is not a map, then the getFullname() method of the object is invoked.</p>
+
+<div class="highlight"><pre><span class="cp">{{</span><span class="nv">user.fullname</span><span class="cp">}}</span><span class="x"></span>
+</pre></div>
+
+<p>Variable values that are lists may be indexed using a numeric attribute specifying the index within the
+list. The following snippet references the 10th element in a list of names.*</p>
+
+<div class="highlight"><pre><span class="cp">{{</span><span class="nv">names.10</span><span class="cp">}}</span><span class="x"></span>
+</pre></div>
+
+<p>Variable values may be filtered using a Unix style pipe filter with predefined or custom filters. The
+"name" attribute of a variable named "store" in the context is lower cased using the "lower" filter, the
+result of which is then url encoded using the "urlencode" filter in the example below.</p>
+
+<div class="highlight"><pre><span class="cp">{{</span><span class="nv">store.name</span><span class="o">|</span><span class="nf">lower</span><span class="o">|</span><span class="nf">urlencode</span><span class="cp">}}</span><span class="x"></span>
+</pre></div>
+
+<p>The built-in filters supported by the language follow:</p>
+
+<ul>
+<li>
+<em>urlencode</em> - Encode the variable value according to URL encoding rules</li>
+<li>
+<em>upper</em> - Convert the variable value to upper case characters</li>
+<li>
+<em>lower</em> - Convert the variable value to lower case characters</li>
+<li>
+<em>join</em> - Join a list of objects into a single string</li>
+<li>
+<em>xmlescape</em> - Escape the variable value so that any XML elements are escaped according to XML escaping rules</li>
+</ul><h3>
+<a name="template-tags" class="anchor" href="#template-tags"><span class="mini-icon mini-icon-link"></span></a>Template tags</h3>
+
+<h4>
+<a name="extends" class="anchor" href="#extends"><span class="mini-icon mini-icon-link"></span></a><em>extends</em>
+</h4>
+
+<p>The <em>extends</em> statement declares that the template inherits content from the parent specified in the
+statement. The <em>extends</em> statement if specified in a template must necessarily be the first statement in
+the template. In the snippet below, the containing template inherits from a template name
+"fragments/213liquidlayout.html".</p>
+
+<div class="highlight"><pre><span class="cp">{%</span> <span class="k">extends</span> <span class="s2">"fragments/213liquidlayout.html"</span><span class="cp">%}</span><span class="x"></span>
+</pre></div>
+
+<h4>
+<a name="include" class="anchor" href="#include"><span class="mini-icon mini-icon-link"></span></a><em>include</em>
+</h4>
+
+<p>The <em>include</em> statement declares that template should include rendered content from the specified
+template. Note, that this does not mean that the template content is substituted in to the current
+template . Rather, the template will invoke the included template with context provided to the current
+template. The following snippet includes content from a template "fragments/includejs.html".</p>
+
+<div class="highlight"><pre><span class="cp">{%</span> <span class="k">include</span> <span class="s2">"fragments/includejs.html"</span> <span class="cp">%}</span><span class="x"></span>
+</pre></div>
+
+<h4>
+<a name="block" class="anchor" href="#block"><span class="mini-icon mini-icon-link"></span></a><em>block</em>
+</h4>
+
+<p>The <em>block</em> statement specifies the beginning of a named block. A named block is a place holder in the
+template output that can be overriden by a inherited template. While a block may be nested within
+another block, block names and definition are global to the template scope. If a template does not
+override the block, the default content specified in the ancestor template will be rendered. The
+template engine renders content of the parent first replacing content from blocks that are overridden,
+before rendering content in the current template. Only content outside any non-overriding block is
+appended to the template output. It is possible to reference the content of a block as defined by the
+template's parent using the special variable "block.super". The following snippet shows a block
+named main that renders an empty div.</p>
+
+<div class="highlight"><pre><span class="cp">{%</span> <span class="k">block</span> <span class="nv">main</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">&lt;div&gt;&lt;/div&gt;</span>
+<span class="cp">{%</span> <span class="k">endblock</span> <span class="cp">%}</span><span class="x"></span>
+</pre></div>
+
+<h4>
+<a name="endblock" class="anchor" href="#endblock"><span class="mini-icon mini-icon-link"></span></a><em>endblock</em>
+</h4>
+
+<p>The <em>endblock</em> statement specifies the end of a named block. The name of the block that it terminates is
+an optional attribute of the statement.</p>
+
+<div class="highlight"><pre><span class="cp">{%</span> <span class="k">endblock</span> <span class="nv">main</span> <span class="cp">%}</span><span class="x"></span>
+</pre></div>
+
+<h4>
+<a name="for" class="anchor" href="#for"><span class="mini-icon mini-icon-link"></span></a><em>for</em>
+</h4>
+
+<p>The <em>for</em> statement is one of the control statements in the template language that iterates over the
+contents of a list. There are a few builtin variables that are available with in a for loop. These are</p>
+
+<ul>
+<li>
+<em>forloop.counter</em> - the current iteration count through the loop (1-indexed)</li>
+<li>
+<em>forloop.counter0</em> - the current iteration count through the loop (0-indexed)</li>
+<li>
+<em>forloop.revcounter</em> - the current iteration in the loop from the end of the list (1-indexed)</li>
+<li>
+<em>forloop.revcounter0</em> - the current iteration in the loop from the end of the list (0-indexed)</li>
+<li>
+<em>forloop.parent</em> - the parent of the current forloop in case of nested for loops.</li>
+</ul><p>The following snippet iterates through a list (names) set in the context and renders each value (name)
+in a loop.</p>
+
+<div class="highlight"><pre><span class="cp">{%</span><span class="k">for</span> <span class="nv">name</span> <span class="k">in</span> <span class="nv">names</span><span class="cp">%}</span><span class="x"></span>
+<span class="cp">{{</span><span class="nb">forloop</span><span class="nv">.counter</span><span class="cp">}}</span><span class="x">) </span><span class="cp">{{</span><span class="nv">name</span><span class="cp">}}</span><span class="x"></span>
+<span class="cp">{%</span><span class="k">endfor</span><span class="cp">%}</span><span class="x"></span>
+</pre></div>
+
+<p>If the context variable names is set to the list ["Roger", "Fran", "Barney"], the snippet above would
+produce</p>
+
+<pre><code>1) Roger
+2) Fran
+3) Barney
+</code></pre>
+
+<h4>
+<a name="endfor" class="anchor" href="#endfor"><span class="mini-icon mini-icon-link"></span></a><em>endfor</em>
+</h4>
+
+<p>The <em>endfor</em> statement terminates a for loop as shown below.</p>
+
+<div class="highlight"><pre><span class="cp">{%</span><span class="k">endfor</span><span class="cp">%}</span><span class="x"></span>
+</pre></div>
+
+<h4>
+<a name="if" class="anchor" href="#if"><span class="mini-icon mini-icon-link"></span></a><em>if</em>
+</h4>
+
+<p>The <em>if</em> statement is a control construct in the template language that allows for conditional rendering
+of a portion of the template. The following snippet renders content based on the presence of a context
+variable. If the context variable is a boolean variable, then the conditional clause evaluates if the
+variable evaluates to true.</p>
+
+<div class="highlight"><pre><span class="cp">{%</span><span class="k">if</span> <span class="nv">product.item</span><span class="cp">%}</span><span class="x"></span>
+<span class="x">This product is an item.</span>
+<span class="cp">{%</span><span class="k">endif</span><span class="cp">%}</span><span class="x"></span>
+</pre></div>
+
+<h4>
+<a name="else" class="anchor" href="#else"><span class="mini-icon mini-icon-link"></span></a><em>else</em>
+</h4>
+
+<p>The <em>else</em> statement is an optional construct within a if statement block</p>
+
+<div class="highlight"><pre><span class="cp">{%</span><span class="k">if</span> <span class="nv">product.item</span><span class="cp">%}</span><span class="x"></span>
+<span class="x">This product is an item.</span>
+<span class="cp">{%</span><span class="k">else</span><span class="cp">%}</span><span class="x"></span>
+<span class="x">This product is not an item.</span>
+<span class="cp">{%</span><span class="k">endif</span><span class="cp">%}</span><span class="x"></span>
+</pre></div>
+
+<h4>
+<a name="endif" class="anchor" href="#endif"><span class="mini-icon mini-icon-link"></span></a><em>endif</em>
+</h4>
+
+<p>The <em>endif</em> statement terminates an if and/or optionally an else statement.</p>
+
+<div class="highlight"><pre><span class="cp">{%</span><span class="k">endif</span><span class="cp">%}</span><span class="x"></span>
+</pre></div>
+
+<h4>
+<a name="resourcegroup" class="anchor" href="#resourcegroup"><span class="mini-icon mini-icon-link"></span></a><em>resourcegroup</em>*</h4>
+
+<p>The <em>resourcegroup</em> statement is a named block construct that allows for zero or more resource
+statements. It may be inherited and overridden exactly like a block statement, except that it may only
+contain XHTML variant of resource statements. A resource group is used as a place holder and is
+primarily used as a construct to aid in easy (tooled) manipulation of resources within the group.</p>
+
+<div class="highlight"><pre><span class="cp">{%</span><span class="k">resourcegroup</span> <span class="nv">centerspot</span><span class="cp">%}</span><span class="x"></span>
+<span class="cp">{%</span><span class="k">resource</span><span class="nv">.xhtml</span> <span class="o">/</span><span class="nv">resources</span><span class="o">/</span><span class="nv">marketing</span><span class="o">/</span><span class="nv">springsavings</span><span class="cp">%}</span><span class="x"></span>
+<span class="cp">{%</span><span class="k">resource</span><span class="nv">.xhtml</span> <span class="o">/</span><span class="nv">resources</span><span class="o">/</span><span class="nv">marketing</span><span class="o">/</span><span class="nv">bogo</span><span class="cp">%}</span><span class="x"></span>
+<span class="cp">{%</span><span class="k">endresourcegroup</span><span class="cp">%}</span><span class="x"></span>
+</pre></div>
+
+<h4>
+<a name="endresourcegroup" class="anchor" href="#endresourcegroup"><span class="mini-icon mini-icon-link"></span></a><em>endresourcegroup</em>*</h4>
+
+<p>The endresourcegroup statement terminates a resourcegroup block and may optionally contain the
+name of the group that it terminates.</p>
+
+<div class="highlight"><pre><span class="cp">{%</span><span class="k">endresourcegroup</span> <span class="nv">centerspot</span><span class="cp">%}</span><span class="x"></span>
+</pre></div>
+
+<h4>
+<a name="resource" class="anchor" href="#resource"><span class="mini-icon mini-icon-link"></span></a><em>resource</em>*</h4>
+
+<p>The <em>resource</em> statement allows the template to reference RESTful resources identified by their URI.
+The URI may contain variable references to context variables with single curly braces as shown in the
+examples below which are resolved by the template engine prior to fetching the resource
+representations. There are two variants of the resource statement.
+The statement resource.xhtml renders an XHTML representation of the identified resource. This
+variant may take an optional widget name which the template engine will bind to the representation.
+This variant of the resource statement is primarily used to render the representation along with the
+template output, usually within a espot statement block.</p>
+
+<div class="highlight"><pre><span class="cp">{%</span><span class="k">resource</span><span class="nv">.xhtml</span> <span class="o">/</span><span class="nv">resources</span><span class="o">/</span><span class="nv">marketing</span><span class="o">/{</span><span class="nv">categoryid</span><span class="o">}/</span><span class="nv">featuredproducts</span> <span class="k">with</span> <span class="nv">scrollablepane</span><span class="cp">%}</span><span class="x"></span>
+<span class="cp">{%</span><span class="k">resource</span><span class="nv">.xhtml</span> <span class="o">/</span><span class="nv">resources</span><span class="o">/</span><span class="nv">marketing</span><span class="o">/</span><span class="nv">bogo</span><span class="cp">%}</span><span class="x"></span>
+</pre></div>
+
+<p>The statement resource.json binds the JSON representation of the resource to the context using the
+provided context name. The template may then reference attributes of the resource. It is recommended
+that such references to resources be made outside control constructs so that the template engine may
+pre-process them prior to rendering the template output.</p>
+
+<div class="highlight"><pre><span class="cp">{%</span><span class="k">resource</span><span class="nv">.json</span> <span class="o">/</span><span class="nv">resources</span><span class="o">/</span><span class="nv">product</span><span class="o">/(</span><span class="nv">productid</span><span class="o">}</span> <span class="k">as</span> <span class="nv">prod</span><span class="cp">%}</span><span class="x"></span>
+<span class="cp">{%</span><span class="k">resource</span><span class="nv">.json</span> <span class="o">/</span><span class="nv">resources</span><span class="o">/</span><span class="nv">user</span><span class="o">/{</span><span class="nv">userid</span><span class="o">}</span> <span class="k">as</span> <span class="nv">user</span><span class="cp">%}</span><span class="x"></span>
+</pre></div>
+
+<h4>
+<a name="precondition" class="anchor" href="#precondition"><span class="mini-icon mini-icon-link"></span></a><em>precondition</em>*</h4>
+
+<p>The <em>precondition</em> statement allows the template engine to choose from a set of possible templates by
+matching a set of built-in or custom preconditions. When more than one precondition is specified, all
+of them have to match for the template to be selected. The set of built-in preconditions are :</p>
+
+<ul>
+<li>
+<em>precondition.authorized</em> - Refers to a request from a user that has been authenticated</li>
+<li>
+<em>precondition.google</em> - The request is from a google search result</li>
+<li>
+<em>precondition.search</em> - The request is from a local search result</li>
+<li>
+<em>precondition.day</em> - The request is made on a particular day</li>
+<li>
+<em>precondition.tod</em> - The request is made on a particular time of day</li>
+<li>
+<em>precondition.weekend</em> - The request is made on a weekend</li>
+<li>
+<em>precondition.yahoo</em> - The request is from a yahoo search result</li>
+</ul><div class="highlight"><pre><span class="cp">{%</span><span class="k">precondition</span><span class="nv">.authorized</span><span class="cp">%}</span><span class="x"></span>
+<span class="cp">{%</span><span class="k">precondition</span><span class="nv">.google</span><span class="cp">%}</span><span class="x"></span>
+</pre></div>
+
+<h4>
+<a name="layout" class="anchor" href="#layout"><span class="mini-icon mini-icon-link"></span></a><em>layout</em>*</h4>
+
+<p>The <em>layout</em> statement is used to specify the layout - the way content is laid out in a page. Layout
+statements may be inherited by templates or overriden just like blocks and espots.</p>
+
+<div class="highlight"><pre><span class="cp">{%</span> <span class="k">layout</span> <span class="s2">"myfavoritelayout.html"</span><span class="cp">%}</span><span class="x"></span>
+</pre></div>
+
+	</div>
+</section>
+
+<section id="about">
+	<div class="page">
+    <h1>About</h1>
+
+<p>RSTL was developed by Madhu Chetuparambil in 2010 and released as an open source project in 2012</p>
+
+    <footer>
+    </footer>
+</div>
+</section>
+</div>
+
+
+    <a href="https://github.com/rstl/rstl"><img style="position: absolute; top: 0; right: 0; border: 0;z-index:10" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
+
+
+</body></html>
